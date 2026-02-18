@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NewsletterSignupTest extends TestBase {
 
     @Test
-    @Story("User subscribes with valid email")
-    @Description("Verify user can subscribe successfully with valid email")
-    void shouldSubscribeSuccessfully() {
+    @Story("Verify that user subscribes with valid email")
+    @Description("Verify that user can subscribe successfully with valid email")
+    void verifyThatUserSubscribesSuccessfully() {
         NewsletterPage newsletterPage = new NewsletterPage(driver);
         // Page is opened provided by TestBase
 

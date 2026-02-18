@@ -26,10 +26,10 @@ jobs:
         uses: actions/checkout@v4
 
       # 2. Set up Java 17
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
 
@@ -74,6 +74,19 @@ jobs:
           check_name: "Selenium Test Results"
           comment_on_pr: true
           fail_on: "test failures"
+
+      # 7. Generate Allure Report
+      - name: Generate Allure Report
+        run: mvn allure:report
+        if: always()
+
+      # 8. Upload Allure Report as artifact
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report
+          path: target/site/allure-maven-plugin/
 
       # 7. Upload Surefire reports as downloadable artifact
       - name: Upload test reports

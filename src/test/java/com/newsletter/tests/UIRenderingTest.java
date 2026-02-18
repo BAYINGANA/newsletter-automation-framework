@@ -31,58 +31,58 @@ class UIRenderingTest extends TestBase {
     // ── Content checks ────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("TC-6.1 | Page heading reads 'Stay updated!'")
-    void heading_shouldReadStayUpdated() {
+    @DisplayName("Verify that page heading reads 'Stay updated!'")
+    void verifyThatHeadingReadsStayUpdated() {
         assertEquals("Stay updated!", newsletterPage.getHeadingText(),
                 "Main heading should read 'Stay updated!'");
     }
 
     @Test
-    @DisplayName("TC-6.2 | Subheading contains '60,000+ product managers'")
-    void subheading_shouldContainProductManagers() {
+    @DisplayName("Verify that subheading contains '60,000+ product managers'")
+    void verifyThatSubheadingContainsProductManagers() {
         assertTrue(newsletterPage.getSubheadingText().contains("60,000+"),
                 "Subheading should reference 60,000+ product managers");
     }
 
     @Test
-    @DisplayName("TC-6.3 | All three feature list items are visible")
-    void featureItems_shouldAllBeVisible() {
+    @DisplayName("Verify that all three feature list items are visible")
+    void verifyThatFeatureItemsAreVisible() {
         assertTrue(newsletterPage.areAllFeatureItemsVisible(),
                 "All three feature list items should be visible");
     }
 
     @Test
-    @DisplayName("TC-6.4 | Email label reads 'Email address'")
-    void emailLabel_shouldReadEmailAddress() {
+    @DisplayName("Verify that email label reads 'Email address'")
+    void verifyThatEmailLabelReadsEmailAddress() {
         assertEquals("Email address", newsletterPage.getEmailLabelText(),
                 "Email label should read 'Email address'");
     }
 
     @Test
-    @DisplayName("TC-6.5 | Input placeholder reads 'email@company.com'")
-    void placeholder_shouldBeCorrect() {
+    @DisplayName("Verify that input placeholder reads 'email@company.com'")
+    void verifyThatPlaceholderIsCorrect() {
         assertEquals("email@company.com", newsletterPage.getEmailInputPlaceholder(),
                 "Placeholder text should be 'email@company.com'");
     }
 
     @Test
-    @DisplayName("TC-6.6 | Subscribe button text is correct")
-    void subscribeButton_shouldHaveCorrectText() {
+    @DisplayName("Verify that subscribe button text is correct")
+    void verifyThatSubscribeButtonHasCorrectText() {
         assertEquals("Subscribe to monthly newsletter",
                 newsletterPage.getSubscribeButtonText(),
                 "Subscribe button text should match");
     }
 
     @Test
-    @DisplayName("TC-6.7 | Hero image is displayed")
-    void heroImage_shouldBeDisplayed() {
+    @DisplayName("Verify that hero image is displayed")
+    void verifyThatHeroImageIsDisplayed() {
         assertTrue(newsletterPage.isHeroImageDisplayed(),
                 "Hero illustration should be visible");
     }
 
     @Test
-    @DisplayName("TC-6.8 | Desktop hero image src contains 'desktop'")
-    void heroImage_shouldUseDesktopSrcOnWideViewport() {
+    @DisplayName("Verify that desktop hero image src contains 'desktop'")
+    void verifyThatHeroImageUsesDesktopSrcOnWideViewport() {
         // Ensure desktop width
         driver.manage().window().setSize(new Dimension(1440, 900));
         // Re-init page after resize
@@ -95,8 +95,8 @@ class UIRenderingTest extends TestBase {
     // ── Responsive layout ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("TC-8.1 | Mobile viewport (375px): newsletter card visible")
-    void mobileViewport_newsletterCardShouldBeVisible() {
+    @DisplayName("Verify that mobile viewport (375px) shows newsletter card")
+    void verifyThatMobileViewportShowsNewsletterCard() {
         driver.manage().window().setSize(new Dimension(375, 812));
         newsletterPage = new NewsletterPage(driver);
         assertTrue(newsletterPage.isNewsletterCardVisible(),
@@ -104,8 +104,8 @@ class UIRenderingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("TC-8.2 | Mobile viewport (375px): subscribe button visible")
-    void mobileViewport_subscribeButtonShouldBeVisible() {
+    @DisplayName("Verify that mobile viewport (375px) shows subscribe button")
+    void verifyThatMobileViewportShowsSubscribeButton() {
         driver.manage().window().setSize(new Dimension(375, 812));
         newsletterPage = new NewsletterPage(driver);
         assertTrue(newsletterPage.isSubscribeButtonDisplayed(),

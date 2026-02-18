@@ -34,24 +34,24 @@ class FormValidationTest extends TestBase {
     // ── Empty / blank submission ──────────────────────────────────────────────
 
     @Test
-    @DisplayName("TC-1.1 | Submitting empty field shows error message")
-    void submitEmptyField_shouldShowError() {
+    @DisplayName("Verify that submitting empty field shows error message")
+    void verifyThatSubmitEmptyFieldShowsError() {
         newsletterPage.submitForm();
         assertTrue(newsletterPage.isErrorVisible(),
                 "Error message should be visible after empty submission");
     }
 
     @Test
-    @DisplayName("TC-1.2 | Error message text is 'Valid email required'")
-    void errorMessageText_shouldBeCorrect() {
+    @DisplayName("Verify that error message text is 'Valid email required'")
+    void verifyThatErrorMessageTextIsCorrect() {
         newsletterPage.submitForm();
         assertEquals("Valid email required", newsletterPage.getErrorText(),
                 "Error text should read 'Valid email required'");
     }
 
     @Test
-    @DisplayName("TC-1.3 | Input has error CSS class on empty submission")
-    void emptySubmit_inputShouldHaveErrorClass() {
+    @DisplayName("Verify that input has error CSS class on empty submission")
+    void verifyThatEmptySubmitInputHasErrorClass() {
         newsletterPage.submitForm();
         assertTrue(newsletterPage.isEmailInputInErrorState(),
                 "Email input should have 'error' CSS class");
@@ -59,7 +59,7 @@ class FormValidationTest extends TestBase {
 
     // ── Invalid email formats ─────────────────────────────────────────────────
 
-    @ParameterizedTest(name = "TC-1.4 | Invalid email [{0}] should show error")
+    @ParameterizedTest(name = "Verify that invalid email [{0}] shows error")
     @ValueSource(strings = {
             "plaintext",
             "missing@dot",
@@ -69,8 +69,8 @@ class FormValidationTest extends TestBase {
             "double@@domain.com",
             "nodot@domaincom"
     })
-    @DisplayName("TC-1.4 | Invalid email formats should show error")
-    void invalidEmails_shouldShowError(String invalidEmail) {
+    @DisplayName("Verify that invalid email formats show error")
+    void verifyThatInvalidEmailsShowError(String invalidEmail) {
         newsletterPage.enterEmail(invalidEmail).submitForm();
         assertTrue(newsletterPage.isErrorVisible(),
                 "Error should show for invalid email: " + invalidEmail);
@@ -80,14 +80,14 @@ class FormValidationTest extends TestBase {
 
     // ── Valid email formats ───────────────────────────────────────────────────
 
-    @ParameterizedTest(name = "TC-1.5 | Valid email [{0}] should succeed")
+    @ParameterizedTest(name = "Verify that valid email [{0}] succeeds")
     @ValueSource(strings = {
             "user@example.com",
             "USER@EXAMPLE.COM",
             "test123@domain.org"
     })
-    @DisplayName("TC-1.5 | Valid email formats should submit successfully")
-    void validEmails_shouldSubmitSuccessfully(String validEmail) {
+    @DisplayName("Verify that valid email formats submit successfully")
+    void verifyThatValidEmailsSubmitSuccessfully(String validEmail) {
         SuccessPage successPage = newsletterPage.submitValidEmail(validEmail);
         assertTrue(successPage.isSuccessCardVisible(),
                 "Success card should appear for valid email: " + validEmail);
@@ -96,8 +96,8 @@ class FormValidationTest extends TestBase {
     // ── Error clears after valid submission ───────────────────────────────────
 
     @Test
-    @DisplayName("TC-1.6 | Error clears after valid email is submitted")
-    void errorClears_afterValidSubmission() {
+    @DisplayName("Verify that error clears after valid email is submitted")
+    void verifyThatErrorClearsAfterValidSubmission() {
         // Trigger error first
         newsletterPage.submitForm();
         assertTrue(newsletterPage.isErrorVisible(), "Error should be visible initially");
@@ -111,8 +111,8 @@ class FormValidationTest extends TestBase {
     // ── Regex limitation test (known edge case) ───────────────────────────────
 
     @Test
-    @DisplayName("TC-1.7 | Known: regex rejects valid email with dot in local part")
-    void knownLimitation_dotInLocalPart() {
+    @DisplayName("Verify that regex rejects valid email with dot in local part (Known Limitation)")
+    void verifyThatKnownLimitationDotInLocalPart() {
         // user.name@example.com is RFC-valid but rejected by current regex
         // This test documents the known limitation
         newsletterPage.enterEmail("user.name@example.com").submitForm();
