@@ -1,30 +1,139 @@
-name: java CI with Maven
+name: Newsletter Selenium Tests
 
+# ── Triggers ────────────────────────────────────────────────────────────────
 on:
   push:
-    branches: ["main"]
-    pull_request:
-      branches: ["main"]
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
 
+# ── Permissions ──────────────────────────────────────────────────────────────
+permissions:
+  contents: read
+  checks: write        # needed to publish test results
+  pull-requests: write # needed to comment on PRs
+
+# ── Jobs ─────────────────────────────────────────────────────────────────────
 jobs:
-  build:
+  selenium-tests:
+    name: Run Selenium Tests (JUnit 5)
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
+
+      # 1. Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Java 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
+      # 3. Install Google Chrome (latest stable)
+      - name: Install Google Chrome
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update -q
+          sudo apt-get install -y google-chrome-stable
+          google-chrome --version
+
+      # 4. Cache Maven dependencies
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-m2
+            ${{ runner.os }}-maven-
 
-      - name: Build and Test
-        run: mvn clean test
+      # 5. Run tests in headless mode with the 'ci' Maven profile
+      - name: Run Selenium tests (headless)
+        id: run-tests
+        run: |
+          mvn test -P ci \
+            -Dheadless=true \
+            -Dbase.url=https://bayingana.github.io/NEWSLETTER/ \
+            -Dmaven.test.failure.ignore=true \
+            --batch-mode \
+            --no-transfer-progress
+        env:
+          DISPLAY: :99   # virtual display fallback
+
+      # 6. Publish JUnit 5 test results as GitHub Check
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()   # run even if tests failed
+        with:
+          files: |
+            target/surefire-reports/**/*.xml
+          check_name: "Selenium Test Results"
+          comment_on_pr: true
+          fail_on: "test failures"
+
+      # 7. Upload Surefire reports as downloadable artifact
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: surefire-reports-${{ github.run_number }}
+          path: |
+            target/surefire-reports/
+          retention-days: 14
+
+      # 8. Slack notification — SUCCESS
+      - name: Notify Slack on success
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "*Newsletter Selenium Tests — PASSED*",
+              "attachments": [
+                {
+                  "color": "#36a64f",
+                  "fields": [
+                    { "title": "Repository", "value": "${{ github.repository }}", "short": true },
+                    { "title": "Branch",     "value": "${{ github.ref_name }}",   "short": true },
+                    { "title": "Triggered by", "value": "${{ github.actor }}",    "short": true },
+                    { "title": "Run",         "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run #${{ github.run_number }}>", "short": true }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      # 9. Slack notification — FAILURE
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "*Newsletter Selenium Tests — FAILED*",
+              "attachments": [
+                {
+                  "color": "#e01e5a",
+                  "fields": [
+                    { "title": "Repository",  "value": "${{ github.repository }}", "short": true },
+                    { "title": "Branch",      "value": "${{ github.ref_name }}",   "short": true },
+                    { "title": "Triggered by","value": "${{ github.actor }}",      "short": true },
+                    { "title": "Run",         "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run #${{ github.run_number }}>", "short": true }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      # 10. Fail the build if any tests actually failed
+      - name: Fail build on test failures
+        if: steps.run-tests.outcome == 'failure'
+        run: exit 1

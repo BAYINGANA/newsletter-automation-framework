@@ -1,75 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.newsletter</groupId>
-    <artifactId>newsletter-automation-framework</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>newsletter-selenium-tests</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Newsletter Selenium Tests</name>
+    <description>Automated UI tests for the Newsletter Sign-Up form using Selenium WebDriver and JUnit 5</description>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions -->
+        <selenium.version>4.18.1</selenium.version>
+        <junit.version>5.10.2</junit.version>
+        <webdrivermanager.version>5.7.0</webdrivermanager.version>
+        <surefire.version>3.2.5</surefire.version>
+        <allure.version>2.25.0</allure.version>
     </properties>
 
     <dependencies>
+
+        <!-- ── Selenium WebDriver ── -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.18.1</version>
+            <version>${selenium.version}</version>
         </dependency>
 
+        <!-- ── WebDriverManager: auto-downloads ChromeDriver ── -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.6.3</version>
+            <version>${webdrivermanager.version}</version>
         </dependency>
 
+        <!-- ── JUnit 5 ── -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.11.4</version>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
+        <!-- ── Allure reporting ── -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
-            <version>2.24.0</version>
+            <version>${allure.version}</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
 
+            <!-- ── Maven Surefire: runs JUnit 5 tests ── -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>${surefire.version}</version>
                 <configuration>
-                    <useModulePath>false</useModulePath>
-                    <properties>
-                        <configurationParameters>
-                            junit.jupiter.extensions.autodetection.enabled=true
-                        </configurationParameters>
-                    </properties>
+                    <!-- Run tests in parallel by class for faster CI -->
+                    <parallel>classes</parallel>
+                    <threadCount>2</threadCount>
+                    <!-- Fail build on test failure -->
+                    <failIfNoTests>true</failIfNoTests>
+                    <!-- Detailed output in logs -->
+                    <printSummary>true</printSummary>
+                    <reportFormat>plain</reportFormat>
                     <systemPropertyVariables>
-                        <allure.results.directory>target/allure-results</allure.results.directory>
+                        <!-- Pass base URL from CI env or use default -->
+                        <base.url>${base.url}</base.url>
+                        <!-- Headless mode for CI -->
+                        <headless>${headless}</headless>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
 
-
+            <!-- ── Compiler plugin ── -->
             <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.12.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
 
         </plugins>
     </build>
+
+    <!-- Default property values (overridden by CI) -->
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <headless>true</headless>
+                <base.url>https://bayingana.github.io/NEWSLETTER/</base.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <headless>false</headless>
+                <base.url>https://bayingana.github.io/NEWSLETTER/</base.url>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
