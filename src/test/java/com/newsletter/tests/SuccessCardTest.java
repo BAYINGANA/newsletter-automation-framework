@@ -2,22 +2,13 @@ package com.newsletter.tests;
 
 import com.newsletter.pages.NewsletterPage;
 import com.newsletter.pages.SuccessPage;
-import com.newsletter.utils.TestBase;
+import com.newsletter.base.TestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * SuccessCardTest
- *
- * Tests the success card state and dismiss flow:
- * - Success card visibility after valid submission
- * - Confirmed email displayed correctly
- * - Dismiss button resets the form
- * - Newsletter re-appears after dismiss
- */
 @DisplayName("Success Card Tests")
 class SuccessCardTest extends TestBase {
 
@@ -31,8 +22,6 @@ class SuccessCardTest extends TestBase {
         newsletterPage = new NewsletterPage(driver);
         successPage = newsletterPage.submitValidEmail(VALID_EMAIL);
     }
-
-    // ── Success card visibility ───────────────────────────────────────────────
 
     @Test
     @DisplayName("Verify that success card is visible after valid submission")
@@ -48,7 +37,6 @@ class SuccessCardTest extends TestBase {
                 "Newsletter card should be hidden after successful submission");
     }
 
-    // ── Content checks ────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("Verify that success heading reads 'Thanks for subscribing!'")
@@ -86,11 +74,9 @@ class SuccessCardTest extends TestBase {
     void verifyThatDismissButtonIsVisibleWithCorrectText() {
         assertTrue(successPage.isDismissButtonVisible(),
                 "Dismiss button should be visible");
-        assertEquals("Dismiss message", successPage.getDismissButtonText(),
-                "Dismiss button should read 'Dismiss message'");
+        assertEquals("Dismiss notification", successPage.getDismissButtonText(),
+                "Dismiss button should read 'Dismiss notification'");
     }
-
-    // ── Dismiss flow ──────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("Verify that dismiss returns to newsletter card")

@@ -9,11 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-/**
- * SuccessPage
- *
- * Page Object Model for the success card shown after a valid subscription.
- */
 public class SuccessPage {
 
     private final WebDriver driver;
@@ -49,9 +44,6 @@ public class SuccessPage {
 
     // ── Actions ───────────────────────────────────────────────────────────────
 
-    /**
-     * Clicks the Dismiss button and returns to the NewsletterPage.
-     */
     public NewsletterPage clickDismiss() {
         wait.until(ExpectedConditions.elementToBeClickable(dismissButton));
         dismissButton.click();

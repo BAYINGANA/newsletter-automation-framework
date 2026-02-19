@@ -1,7 +1,7 @@
 package com.newsletter.tests;
 
 import com.newsletter.pages.NewsletterPage;
-import com.newsletter.utils.TestBase;
+import com.newsletter.base.TestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,15 +9,6 @@ import org.openqa.selenium.Dimension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * UIRenderingTest
- *
- * Tests static UI content and layout rendering:
- * - Page content (headings, labels, placeholder text)
- * - Feature list items visible
- * - Hero image rendered
- * - Responsive layout switches at mobile breakpoint
- */
 @DisplayName("UI Rendering Tests")
 class UIRenderingTest extends TestBase {
 
@@ -27,8 +18,6 @@ class UIRenderingTest extends TestBase {
     void initPage() {
         newsletterPage = new NewsletterPage(driver);
     }
-
-    // ── Content checks ────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("Verify that page heading reads 'Stay updated!'")
@@ -59,10 +48,10 @@ class UIRenderingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Verify that input placeholder reads 'email@company.com'")
+    @DisplayName("Verify that input placeholder reads 'email@company.org'")
     void verifyThatPlaceholderIsCorrect() {
-        assertEquals("email@company.com", newsletterPage.getEmailInputPlaceholder(),
-                "Placeholder text should be 'email@company.com'");
+        assertEquals("email@company.org", newsletterPage.getEmailInputPlaceholder(),
+                "Placeholder text should be 'email@company.org'");
     }
 
     @Test
@@ -83,16 +72,12 @@ class UIRenderingTest extends TestBase {
     @Test
     @DisplayName("Verify that desktop hero image src contains 'desktop'")
     void verifyThatHeroImageUsesDesktopSrcOnWideViewport() {
-        // Ensure desktop width
         driver.manage().window().setSize(new Dimension(1440, 900));
-        // Re-init page after resize
         newsletterPage = new NewsletterPage(driver);
         String src = newsletterPage.getHeroImageSrc();
         assertTrue(src.contains("desktop") || src.contains("illustration"),
                 "Desktop viewport should use the desktop illustration. Actual src: " + src);
     }
-
-    // ── Responsive layout ─────────────────────────────────────────────────────
 
     @Test
     @DisplayName("Verify that mobile viewport (375px) shows newsletter card")

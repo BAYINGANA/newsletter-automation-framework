@@ -1,5 +1,6 @@
-package com.newsletter.utils;
+package com.newsletter.base;
 
+import com.newsletter.utils.DriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;

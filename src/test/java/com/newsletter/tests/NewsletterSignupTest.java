@@ -2,7 +2,7 @@ package com.newsletter.tests;
 
 import com.newsletter.pages.NewsletterPage;
 import com.newsletter.pages.SuccessPage;
-import com.newsletter.utils.TestBase;
+import com.newsletter.base.TestBase;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -21,7 +21,6 @@ public class NewsletterSignupTest extends TestBase {
     @Description("Verify that user can subscribe successfully with valid email")
     void verifyThatUserSubscribesSuccessfully() {
         NewsletterPage newsletterPage = new NewsletterPage(driver);
-        // Page is opened provided by TestBase
 
         SuccessPage successPage = newsletterPage.submitValidEmail("didi@example.com");
 
